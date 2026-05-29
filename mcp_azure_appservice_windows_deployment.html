@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deploy MCP Application from VS Code to Azure App Service - Windows</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #dbe3f0;
+      --code-bg: #111827;
+      --code-text: #e5e7eb;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1d4ed8, #0f172a);
+      color: white;
+      padding: 42px 22px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 12px;
+      font-size: 34px;
+    }
+
+    header p {
+      max-width: 900px;
+      margin: 0 auto;
+      font-size: 18px;
+      color: #dbeafe;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 28px auto;
+      padding: 0 18px 50px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+    }
+
+    h2 {
+      color: var(--primary-dark);
+      margin-top: 0;
+      border-left: 5px solid var(--primary);
+      padding-left: 12px;
+    }
+
+    h3 {
+      color: #111827;
+      margin-top: 24px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .note, .warning, .success {
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin: 14px 0;
+    }
+
+    .note {
+      background: #eff6ff;
+      border-left: 5px solid var(--primary);
+    }
+
+    .warning {
+      background: #fffbeb;
+      border-left: 5px solid var(--warning);
+    }
+
+    .success {
+      background: #ecfdf5;
+      border-left: 5px solid var(--success);
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 16px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.5;
+      position: relative;
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .inline-code {
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    ul, ol { padding-left: 24px; }
+
+    .toc a {
+      color: var(--primary-dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .toc li {
+      margin: 8px 0;
+    }
+
+    .architecture {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 14px;
+      padding: 20px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      white-space: pre-wrap;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 40px;
+      font-size: 14px;
+    }
+
+    @media print {
+      body { background: white; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+      header { background: #1e40af !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Deploy MCP Application from VS Code to Azure App Service - Windows</h1>
+    <p>Step-by-step corporate trainer style guide for deploying a Python/FastAPI MCP-style HTTP server to Azure App Service using VS Code.</p>
+  </header>
+
+  <main class="container">
+    <section class="card toc">
+      <span class="badge">Quick Navigation</span>
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#local-setup">Prepare MCP App Locally</a></li>
+        <li><a href="#sample-app">Create Simple MCP-style HTTP App</a></li>
+        <li><a href="#test-local">Test Locally</a></li>
+        <li><a href="#azure-files">Prepare Files for Azure</a></li>
+        <li><a href="#vscode-extension">Install VS Code Azure Extensions</a></li>
+        <li><a href="#create-app-service">Create Azure App Service - Windows</a></li>
+        <li><a href="#deploy">Deploy from VS Code</a></li>
+        <li><a href="#startup-command">Configure Startup Command</a></li>
+        <li><a href="#test-azure">Test Azure Deployment</a></li>
+        <li><a href="#logs">Enable Logs</a></li>
+        <li><a href="#errors">Common Errors and Fixes</a></li>
+        <li><a href="#copilot">Connect to Copilot Studio</a></li>
+        <li><a href="#checklist">Final Checklist</a></li>
+      </ol>
+    </section>
+
+    <section class="card" id="overview">
+      <h2>Overview</h2>
+      <p>This guide explains how to deploy an <strong>MCP application</strong> from <strong>VS Code</strong> to <strong>Azure App Service on Windows</strong>.</p>
+      <div class="warning">
+        <strong>Important:</strong> Azure App Service is best suited for web/API applications. If your MCP server is only STDIO-based, convert it to an HTTP-based MCP server before deploying to App Service.
+      </div>
+      <p>For cloud deployment, expose your MCP tools through an HTTP endpoint such as:</p>
+      <pre><code>https://your-mcp-app.azurewebsites.net/mcp</code></pre>
+    </section>
+
+    <section class="card" id="architecture">
+      <h2>Architecture</h2>
+      <div class="architecture">VS Code
+   |
+   | Deploy
+   v
+Azure App Service - Windows
+   |
+   | Public HTTPS URL
+   v
+MCP HTTP Server
+   |
+   | Calls tools / APIs / database
+   v
+Your backend logic</div>
+      <p>Example final URL:</p>
+      <pre><code>https://your-mcp-app.azurewebsites.net</code></pre>
+      <p>Possible MCP endpoint:</p>
+      <pre><code>https://your-mcp-app.azurewebsites.net/mcp</code></pre>
+    </section>
+
+    <section class="card" id="local-setup">
+      <h2>Part 1: Prepare MCP App Locally</h2>
+      <h3>Step 1: Create Project Folder</h3>
+      <pre><code>mkdir my-mcp-azure-app
+cd my-mcp-azure-app</code></pre>
+
+      <h3>Step 2: Create Virtual Environment</h3>
+      <pre><code>python -m venv .venv</code></pre>
+
+      <h3>Step 3: Activate Virtual Environment</h3>
+      <pre><code>.venv\Scripts\activate</code></pre>
+
+      <h3>Step 4: Install Required Packages</h3>
+      <pre><code>pip install fastapi uvicorn
+pip install mcp</code></pre>
+
+      <h3>Step 5: Create requirements.txt</h3>
+      <pre><code>pip freeze &gt; requirements.txt</code></pre>
+    </section>
+
+    <section class="card" id="sample-app">
+      <h2>Part 2: Create Simple MCP-style HTTP App</h2>
+      <p>Create a file named <span class="inline-code">main.py</span>.</p>
+      <pre><code>from fastapi import FastAPI
+from pydantic import BaseModel
+from datetime import datetime
+
+app = FastAPI(title="Azure MCP Demo Server")
+
+
+class ToolRequest(BaseModel):
+    tool_name: str
+    input: str | None = None
+
+
+@app.get("/")
+def home():
+    return {
+        "message": "MCP Server is running on Azure App Service",
+        "status": "ok",
+        "endpoints": ["/health", "/tools", "/mcp"]
+    }
+
+
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy",
+        "time": datetime.utcnow().isoformat()
+    }
+
+
+@app.get("/tools")
+def list_tools():
+    return {
+        "tools": [
+            {
+                "name": "get_current_time",
+                "description": "Returns current server time"
+            },
+            {
+                "name": "reverse_text",
+                "description": "Reverses the given text"
+            }
+        ]
+    }
+
+
+@app.post("/mcp")
+def call_tool(request: ToolRequest):
+    if request.tool_name == "get_current_time":
+        return {
+            "tool": "get_current_time",
+            "result": datetime.utcnow().isoformat()
+        }
+
+    if request.tool_name == "reverse_text":
+        text = request.input or ""
+        return {
+            "tool": "reverse_text",
+            "input": text,
+            "result": text[::-1]
+        }
+
+    return {
+        "error": "Unknown tool",
+        "available_tools": ["get_current_time", "reverse_text"]
+    }</code></pre>
+    </section>
+
+    <section class="card" id="test-local">
+      <h2>Part 3: Test Locally</h2>
+      <p>Run the app locally:</p>
+      <pre><code>uvicorn main:app --host 127.0.0.1 --port 8000</code></pre>
+      <p>Open these URLs in your browser:</p>
+      <pre><code>http://127.0.0.1:8000
+http://127.0.0.1:8000/health
+http://127.0.0.1:8000/docs</code></pre>
+      <p>Test MCP endpoint using PowerShell:</p>
+      <pre><code>Invoke-RestMethod `
+  -Uri "http://127.0.0.1:8000/mcp" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"tool_name":"reverse_text","input":"Hello MCP"}'</code></pre>
+      <p>Expected result:</p>
+      <pre><code>{
+  "tool": "reverse_text",
+  "input": "Hello MCP",
+  "result": "PCM olleH"
+}</code></pre>
+    </section>
+
+    <section class="card" id="azure-files">
+      <h2>Part 4: Prepare Files for Azure App Service</h2>
+      <p>Your folder should look like this:</p>
+      <pre><code>my-mcp-azure-app
+│
+├── main.py
+├── requirements.txt
+└── .venv</code></pre>
+      <div class="warning">
+        Do not deploy <span class="inline-code">.venv</span> to Azure App Service.
+      </div>
+      <p>Create a <span class="inline-code">.gitignore</span> file:</p>
+      <pre><code>.venv/
+__pycache__/
+*.pyc
+.env</code></pre>
+    </section>
+
+    <section class="card" id="vscode-extension">
+      <h2>Part 5: Install VS Code Azure Extensions</h2>
+      <p>Install these VS Code extensions:</p>
+      <ul>
+        <li>Azure App Service</li>
+        <li>Azure Account</li>
+        <li>Python</li>
+      </ul>
+      <h3>Login to Azure from VS Code</h3>
+      <pre><code>View → Command Palette → Azure: Sign In</code></pre>
+      <p>Login with your Azure account and open the Azure icon on the left side.</p>
+    </section>
+
+    <section class="card" id="create-app-service">
+      <h2>Part 6: Create Azure App Service - Windows</h2>
+      <p>In VS Code Azure panel:</p>
+      <pre><code>Azure → App Service → Create New Web App</code></pre>
+      <table>
+        <thead>
+          <tr>
+            <th>Setting</th>
+            <th>Recommended Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Subscription</td><td>Your Azure subscription</td></tr>
+          <tr><td>App name</td><td>my-mcp-demo-app</td></tr>
+          <tr><td>Runtime stack</td><td>Python 3.11 or Python 3.12</td></tr>
+          <tr><td>OS</td><td>Windows</td></tr>
+          <tr><td>Region</td><td>Central India / South India / East US</td></tr>
+          <tr><td>Pricing Plan</td><td>Basic / Standard / Free if available</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        For production MCP/API apps, use Basic B1 or above because Always On is usually needed.
+      </div>
+    </section>
+
+    <section class="card" id="deploy">
+      <h2>Part 7: Deploy from VS Code</h2>
+      <ol>
+        <li>Open the Azure panel in VS Code.</li>
+        <li>Right-click your App Service.</li>
+        <li>Click <strong>Deploy to Web App</strong>.</li>
+        <li>Select your project folder: <span class="inline-code">my-mcp-azure-app</span>.</li>
+        <li>Confirm deployment.</li>
+      </ol>
+      <p>VS Code will zip your project files and deploy them to Azure App Service.</p>
+    </section>
+
+    <section class="card" id="startup-command">
+      <h2>Part 8: Configure Startup Command</h2>
+      <div class="warning">
+        This is the most important step for Python FastAPI apps on Windows App Service.
+      </div>
+      <p>Go to Azure Portal:</p>
+      <pre><code>Azure Portal → App Services → Your App → Configuration → General settings</code></pre>
+      <p>Set the startup command:</p>
+      <pre><code>python -m uvicorn main:app --host 0.0.0.0 --port %HTTP_PLATFORM_PORT%</code></pre>
+      <p>Then click:</p>
+      <pre><code>Save → Restart</code></pre>
+      <h3>Why use %HTTP_PLATFORM_PORT%?</h3>
+      <p>On Windows App Service, Azure assigns a dynamic port. Your app should listen on that port instead of hardcoding port 8000.</p>
+      <h3>Add App Settings</h3>
+      <p>Go to:</p>
+      <pre><code>App Service → Configuration → Application settings</code></pre>
+      <p>Add:</p>
+      <pre><code>SCM_DO_BUILD_DURING_DEPLOYMENT = true</code></pre>
+      <p>Optional:</p>
+      <pre><code>PYTHON_ENABLE_WORKER_EXTENSIONS = 1</code></pre>
+      <p>If your app uses secrets, add them as Application Settings:</p>
+      <pre><code>API_KEY = your-secret-key
+DATABASE_URL = your-db-connection-string</code></pre>
+      <div class="note">
+        Do not hardcode secrets inside Python files.
+      </div>
+    </section>
+
+    <section class="card" id="test-azure">
+      <h2>Part 9: Test Azure Deployment</h2>
+      <p>Open:</p>
+      <pre><code>https://your-app-name.azurewebsites.net</code></pre>
+      <p>Test health endpoint:</p>
+      <pre><code>https://your-app-name.azurewebsites.net/health</code></pre>
+      <p>Test Swagger docs:</p>
+      <pre><code>https://your-app-name.azurewebsites.net/docs</code></pre>
+      <p>Test MCP endpoint using PowerShell:</p>
+      <pre><code>Invoke-RestMethod `
+  -Uri "https://your-app-name.azurewebsites.net/mcp" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"tool_name":"reverse_text","input":"Hello from Azure"}'</code></pre>
+      <p>Expected output:</p>
+      <pre><code>{
+  "tool": "reverse_text",
+  "input": "Hello from Azure",
+  "result": "eruzA morf olleH"
+}</code></pre>
+    </section>
+
+    <section class="card" id="logs">
+      <h2>Part 10: Enable Logs</h2>
+      <p>Go to:</p>
+      <pre><code>App Service → Monitoring → App Service logs</code></pre>
+      <p>Enable:</p>
+      <ul>
+        <li>Application Logging</li>
+        <li>Web Server Logging</li>
+        <li>Detailed Error Messages</li>
+        <li>Failed Request Tracing</li>
+      </ul>
+      <p>Then open:</p>
+      <pre><code>App Service → Log stream</code></pre>
+      <p>This helps you see startup errors, missing packages, wrong file names, or port issues.</p>
+    </section>
+
+    <section class="card" id="errors">
+      <h2>Part 11: Common Errors and Fixes</h2>
+      <h3>Error 1: Default Azure Page Showing</h3>
+      <p><strong>Meaning:</strong> Your files deployed, but Azure did not start your Python app correctly.</p>
+      <p><strong>Fix:</strong></p>
+      <pre><code>python -m uvicorn main:app --host 0.0.0.0 --port %HTTP_PLATFORM_PORT%</code></pre>
+      <p>Also check that your file is named <span class="inline-code">main.py</span> and your FastAPI variable is <span class="inline-code">app</span>.</p>
+
+      <h3>Error 2: Application Error</h3>
+      <p>Check Log Stream. Common reasons:</p>
+      <ul>
+        <li><span class="inline-code">requirements.txt</span> missing</li>
+        <li><span class="inline-code">uvicorn</span> not installed</li>
+        <li>Wrong startup command</li>
+        <li>Wrong Python version</li>
+        <li><span class="inline-code">main.py</span> missing</li>
+        <li><span class="inline-code">app</span> variable name mismatch</li>
+      </ul>
+
+      <h3>Error 3: No module named uvicorn</h3>
+      <pre><code>pip install uvicorn fastapi
+pip freeze &gt; requirements.txt</code></pre>
+      <p>Then redeploy.</p>
+
+      <h3>Error 4: Could not import module "main"</h3>
+      <p>This means Azure cannot find <span class="inline-code">main.py</span>.</p>
+      <p>If your file is in project root, use:</p>
+      <pre><code>python -m uvicorn main:app --host 0.0.0.0 --port %HTTP_PLATFORM_PORT%</code></pre>
+      <p>If your file is inside a folder like <span class="inline-code">app/main.py</span>, use:</p>
+      <pre><code>python -m uvicorn app.main:app --host 0.0.0.0 --port %HTTP_PLATFORM_PORT%</code></pre>
+
+      <h3>Error 5: Port Issue</h3>
+      <p>Do not hardcode this in Azure:</p>
+      <pre><code>--port 8000</code></pre>
+      <p>Use this instead:</p>
+      <pre><code>--port %HTTP_PLATFORM_PORT%</code></pre>
+    </section>
+
+    <section class="card" id="copilot">
+      <h2>Part 12: Connect This Azure MCP App to Copilot Studio</h2>
+      <p>Once deployed, your public endpoint is:</p>
+      <pre><code>https://your-app-name.azurewebsites.net/mcp</code></pre>
+      <p>Basic integration flow:</p>
+      <div class="architecture">Copilot Studio Agent
+   ↓
+Action / Connector / Power Automate
+   ↓
+HTTP POST
+   ↓
+Azure App Service MCP endpoint
+   ↓
+Python tool logic
+   ↓
+Response back to Copilot</div>
+      <p>Example request body:</p>
+      <pre><code>{
+  "tool_name": "reverse_text",
+  "input": "Copilot Studio"
+}</code></pre>
+      <p>Example response:</p>
+      <pre><code>{
+  "tool": "reverse_text",
+  "input": "Copilot Studio",
+  "result": "oidutS tolipoc"
+}</code></pre>
+    </section>
+
+    <section class="card">
+      <h2>Recommended Production Settings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Setting</th>
+            <th>Recommended Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>HTTPS Only</td><td>On</td></tr>
+          <tr><td>Always On</td><td>On</td></tr>
+          <tr><td>Minimum TLS Version</td><td>1.2 or higher</td></tr>
+          <tr><td>App Service Plan</td><td>Basic B1 or above</td></tr>
+          <tr><td>Authentication</td><td>Enable if exposing business data</td></tr>
+          <tr><td>Application Insights</td><td>On</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="checklist">
+      <h2>Final Checklist</h2>
+      <ul>
+        <li>main.py exists</li>
+        <li>app = FastAPI() exists</li>
+        <li>requirements.txt exists</li>
+        <li>uvicorn and fastapi are inside requirements.txt</li>
+        <li>App runs locally</li>
+        <li>/health works locally</li>
+        <li>VS Code Azure extension installed</li>
+        <li>Azure App Service created as Windows</li>
+        <li>Startup command configured</li>
+        <li>App settings saved</li>
+        <li>App restarted</li>
+        <li>/health tested in browser</li>
+        <li>/mcp tested using POST request</li>
+      </ul>
+      <div class="success">
+        <strong>Most important startup command for Windows App Service:</strong>
+        <pre><code>python -m uvicorn main:app --host 0.0.0.0 --port %HTTP_PLATFORM_PORT%</code></pre>
+      </div>
+    </section>
+
+    <p class="footer">Prepared as a classroom-style deployment guide for MCP + Azure App Service + VS Code.</p>
+  </main>
+</body>
+</html>
