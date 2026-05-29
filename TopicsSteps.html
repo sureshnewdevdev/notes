@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Example: Copilot Studio Agent and Topics</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --primary:#2563eb;
+      --primary-dark:#1e40af;
+      --soft:#eaf1ff;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --danger:#dc2626;
+      --border:#dbe3ef;
+      --code:#0f172a;
+      --codeText:#e5e7eb;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:Segoe UI, Arial, sans-serif;
+      background:linear-gradient(135deg,#eef4ff,#f8fafc 45%,#fff7ed);
+      color:var(--text);
+      line-height:1.65;
+    }
+    .container{max-width:1120px;margin:0 auto;padding:28px 18px 60px;}
+    .hero{
+      background:linear-gradient(135deg,#1d4ed8,#4f46e5);
+      color:white;
+      border-radius:22px;
+      padding:34px;
+      box-shadow:0 18px 45px rgba(37,99,235,.22);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero:after{
+      content:"";
+      position:absolute;
+      width:240px;height:240px;
+      border-radius:50%;
+      background:rgba(255,255,255,.12);
+      right:-70px;top:-80px;
+    }
+    .hero h1{margin:0 0 12px;font-size:34px;line-height:1.15;}
+    .hero p{margin:0;font-size:18px;max-width:830px;opacity:.95;}
+    .badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.34);padding:7px 12px;border-radius:999px;margin-bottom:18px;font-weight:600;}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:22px;}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:22px;
+      box-shadow:0 10px 25px rgba(15,23,42,.06);
+      transition:.2s ease;
+    }
+    .card:hover{transform:translateY(-2px);box-shadow:0 16px 30px rgba(15,23,42,.09);}
+    h2{font-size:25px;margin:34px 0 14px;color:#111827;}
+    h3{font-size:20px;margin:22px 0 10px;color:#1f2937;}
+    .card h3{margin-top:0;}
+    .note{background:#fff7ed;border-left:6px solid var(--warning);padding:16px 18px;border-radius:14px;margin:16px 0;}
+    .success{background:#ecfdf5;border-left:6px solid var(--success);padding:16px 18px;border-radius:14px;margin:16px 0;}
+    .info{background:var(--soft);border-left:6px solid var(--primary);padding:16px 18px;border-radius:14px;margin:16px 0;}
+    code{background:#eef2ff;color:#1e3a8a;padding:2px 6px;border-radius:6px;font-family:Consolas,Monaco,monospace;}
+    pre{
+      background:var(--code);
+      color:var(--codeText);
+      padding:18px;
+      border-radius:16px;
+      overflow:auto;
+      border:1px solid #334155;
+      font-size:14px;
+      line-height:1.55;
+      position:relative;
+    }
+    .copy-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#93c5fd;margin-bottom:-8px;font-weight:700;}
+    table{width:100%;border-collapse:collapse;background:white;border-radius:16px;overflow:hidden;box-shadow:0 8px 20px rgba(15,23,42,.05);margin:16px 0;}
+    th{background:#1e40af;color:white;text-align:left;padding:13px;}
+    td{border:1px solid var(--border);padding:13px;vertical-align:top;}
+    tr:nth-child(even) td{background:#f8fafc;}
+    .steps{counter-reset:step;display:grid;gap:14px;margin:16px 0;}
+    .step{background:white;border:1px solid var(--border);border-radius:16px;padding:18px 18px 18px 64px;position:relative;box-shadow:0 8px 20px rgba(15,23,42,.05);}
+    .step:before{counter-increment:step;content:counter(step);position:absolute;left:18px;top:18px;width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+    .flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0;}
+    .pill{background:white;border:1px solid var(--border);border-radius:999px;padding:10px 14px;font-weight:700;box-shadow:0 6px 16px rgba(15,23,42,.05);}
+    .arrow{font-weight:900;color:var(--primary);font-size:22px;}
+    .small{font-size:14px;color:var(--muted);}
+    .footer{margin-top:34px;padding:22px;text-align:center;color:var(--muted);}
+    @media(max-width:780px){.grid{grid-template-columns:1fr}.hero h1{font-size:27px}.hero{padding:24px}.flow{display:block}.arrow{display:block;padding:6px 0}.pill{display:inline-block;margin:4px 0}}
+    @media print{body{background:white}.card,.step,table{box-shadow:none}.hero{box-shadow:none}.container{max-width:100%;padding:0}.no-print{display:none}}
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <div class="badge">Copilot Studio Beginner Tutorial</div>
+      <h1>Simple Example to Explain Agent and Topics</h1>
+      <p>This tutorial explains what an Agent is, what Topics are, and how to create a simple Copilot Studio agent step by step using a small practical example.</p>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h3>What is an Agent?</h3>
+        <p>An <strong>Agent</strong> is like a smart digital assistant. It talks to users, understands their questions, and gives answers or performs actions.</p>
+        <p><strong>Simple example:</strong> A “Training Help Agent” that explains AI, Python, RAG, MCP, and Copilot Studio topics.</p>
+      </div>
+      <div class="card">
+        <h3>What is a Topic?</h3>
+        <p>A <strong>Topic</strong> is one small conversation flow inside the agent. Each topic handles one specific user need.</p>
+        <p><strong>Simple example:</strong> “Explain RAG”, “Explain MCP”, “Give Interview Questions”, or “Troubleshoot Error”.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>1. Very Simple Understanding</h2>
+      <table>
+        <thead>
+          <tr><th>Copilot Studio Term</th><th>Meaning</th><th>Simple Example</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Agent</strong></td>
+            <td>The full chatbot or AI assistant.</td>
+            <td>Technical Training Assistant</td>
+          </tr>
+          <tr>
+            <td><strong>Topic</strong></td>
+            <td>One conversation flow inside the agent.</td>
+            <td>Explain Topic</td>
+          </tr>
+          <tr>
+            <td><strong>Trigger Phrases</strong></td>
+            <td>Sentences that start a topic.</td>
+            <td>“Explain RAG”, “What is MCP?”</td>
+          </tr>
+          <tr>
+            <td><strong>Message Node</strong></td>
+            <td>Agent sends a message to the user.</td>
+            <td>“Sure, I can explain that.”</td>
+          </tr>
+          <tr>
+            <td><strong>Question Node</strong></td>
+            <td>Agent asks the user for information.</td>
+            <td>“Which topic do you want to learn?”</td>
+          </tr>
+          <tr>
+            <td><strong>Variable</strong></td>
+            <td>Stores user input for later use.</td>
+            <td>Store topic name in <code>varTopic</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info">
+        <strong>Official concept:</strong> In Copilot Studio, a topic defines how an agent conversation progresses. Trigger phrases help the agent understand when a topic should start.
+      </div>
+    </section>
+
+    <section>
+      <h2>2. Simple Real-Time Example</h2>
+      <h3>Use Case: Training Help Agent</h3>
+      <p>We will create a simple agent that explains any topic entered by the learner.</p>
+      <div class="flow">
+        <span class="pill">User asks: Explain RAG</span>
+        <span class="arrow">→</span>
+        <span class="pill">Topic starts: Explain Topic</span>
+        <span class="arrow">→</span>
+        <span class="pill">Agent explains RAG</span>
+        <span class="arrow">→</span>
+        <span class="pill">Agent asks next option</span>
+      </div>
+      <div class="success">
+        <strong>Goal:</strong> User enters a topic name. The agent explains it in a simple trainer-style format.
+      </div>
+    </section>
+
+    <section>
+      <h2>3. Main Agent Prompt</h2>
+      <p>Paste this in the <strong>Agent Instructions</strong> area.</p>
+      <div class="copy-label">Copy this prompt</div>
+      <pre>You are a simple corporate technical training assistant.
+
+Your job is to explain technical topics in simple English.
+
+When the user asks about any topic, explain it using this format:
+
+1. Meaning
+2. Why we use it
+3. Simple example
+4. Real-world use case
+5. Step-by-step explanation
+6. Quick summary
+
+Rules:
+- Explain like a classroom trainer.
+- Keep the answer beginner-friendly.
+- Use short paragraphs.
+- Use bullet points when useful.
+- If the user asks for interview questions, give questions and answers.
+- If the user asks for a practical example, give a simple real-time example.
+- If you are not sure, ask for more details.</pre>
+    </section>
+
+    <section>
+      <h2>4. Step-by-Step: Create the Agent</h2>
+      <div class="steps">
+        <div class="step">
+          <h3>Open Copilot Studio</h3>
+          <p>Go to Microsoft Copilot Studio and sign in with your Microsoft account.</p>
+        </div>
+        <div class="step">
+          <h3>Create a New Agent</h3>
+          <p>Click <strong>Create</strong> and select <strong>New agent</strong>.</p>
+        </div>
+        <div class="step">
+          <h3>Enter Agent Name</h3>
+          <p>Use this name:</p>
+          <pre>Training Help Agent</pre>
+        </div>
+        <div class="step">
+          <h3>Enter Short Description</h3>
+          <p>Use this description:</p>
+          <pre>This agent explains technical topics in a simple beginner-friendly way.</pre>
+        </div>
+        <div class="step">
+          <h3>Add Instructions</h3>
+          <p>Paste the main agent prompt from the previous section into the <strong>Instructions</strong> area.</p>
+        </div>
+        <div class="step">
+          <h3>Create the Agent</h3>
+          <p>Click <strong>Create</strong>. After the agent is created, go to the <strong>Topics</strong> section.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>5. Step-by-Step: Create First Topic</h2>
+      <p>Create one simple topic called <strong>Explain Topic</strong>.</p>
+      <div class="steps">
+        <div class="step">
+          <h3>Go to Topics</h3>
+          <p>Open your agent and click <strong>Topics</strong>.</p>
+        </div>
+        <div class="step">
+          <h3>Add New Topic</h3>
+          <p>Click <strong>Add a topic</strong>.</p>
+        </div>
+        <div class="step">
+          <h3>Name the Topic</h3>
+          <pre>Explain Topic</pre>
+        </div>
+        <div class="step">
+          <h3>Add Trigger Phrases</h3>
+          <p>Trigger phrases tell the agent when this topic should start.</p>
+          <pre>Explain topic
+Explain RAG
+Explain MCP
+What is GenAI
+Teach me Python
+Tell me about Copilot Studio
+I want to learn</pre>
+        </div>
+        <div class="step">
+          <h3>Add a Message Node</h3>
+          <p>This is the first message shown to the user.</p>
+          <pre>Sure, I can explain technical topics in a simple way.</pre>
+        </div>
+        <div class="step">
+          <h3>Add a Question Node</h3>
+          <p>Ask the learner which topic they want to learn.</p>
+          <pre>Which topic do you want me to explain?</pre>
+          <p>Save the answer in a variable:</p>
+          <pre>varTopic</pre>
+        </div>
+        <div class="step">
+          <h3>Add Final Message Node</h3>
+          <p>Use this message to explain the topic.</p>
+          <pre>Here is a simple explanation of {varTopic}:
+
+1. Meaning:
+{varTopic} is an important concept used in technology.
+
+2. Why we use it:
+We use {varTopic} to solve real-world problems and make work easier.
+
+3. Simple example:
+Think of {varTopic} like a helper that supports a task step by step.
+
+4. Real-world use case:
+Companies can use {varTopic} for automation, support, training, data handling, or decision making.
+
+5. Summary:
+{varTopic} is useful because it helps people understand and solve problems more effectively.
+
+Do you want a practical example or interview questions for this topic?</pre>
+        </div>
+        <div class="step">
+          <h3>Save and Test</h3>
+          <p>Save the topic and test with:</p>
+          <pre>Explain RAG</pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>6. Sample Conversation Output</h2>
+      <p>This is how the agent conversation should look.</p>
+      <pre>User: Explain RAG
+
+Agent: Sure, I can explain technical topics in a simple way.
+
+Agent: Which topic do you want me to explain?
+
+User: RAG
+
+Agent:
+Here is a simple explanation of RAG:
+
+1. Meaning:
+RAG means Retrieval Augmented Generation.
+
+2. Why we use it:
+We use RAG to help AI answer from trusted documents instead of guessing.
+
+3. Simple example:
+If an employee asks about leave policy, RAG searches the HR document and gives the correct answer.
+
+4. Real-world use case:
+RAG can be used in HR chatbots, customer support bots, document Q&amp;A systems, and training assistants.
+
+5. Summary:
+RAG helps AI give more accurate answers using your own data.
+
+Do you want a practical example or interview questions for this topic?</pre>
+    </section>
+
+    <section>
+      <h2>7. Create More Simple Topics</h2>
+      <p>After creating the first topic, you can create more topics like this:</p>
+      <table>
+        <thead>
+          <tr><th>Topic Name</th><th>Purpose</th><th>Trigger Phrases</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Explain Topic</strong></td>
+            <td>Explains any topic.</td>
+            <td>Explain, What is, Teach me</td>
+          </tr>
+          <tr>
+            <td><strong>Interview Questions</strong></td>
+            <td>Gives interview questions and answers.</td>
+            <td>Interview questions, Prepare me, Mock interview</td>
+          </tr>
+          <tr>
+            <td><strong>Practical Example</strong></td>
+            <td>Gives real-time project examples.</td>
+            <td>Practical example, Real-time use case, Project idea</td>
+          </tr>
+          <tr>
+            <td><strong>Troubleshooting</strong></td>
+            <td>Helps fix errors.</td>
+            <td>I got error, Not working, Fix this issue</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>8. Prompt to Create Topic Automatically</h2>
+      <p>If Copilot Studio gives you an option to describe the topic, paste this prompt.</p>
+      <div class="copy-label">Auto-create topic prompt</div>
+      <pre>Create a topic called "Explain Topic".
+
+The topic should explain any technical topic entered by the user.
+
+Flow:
+1. Start when the user says phrases like "Explain", "What is", "Teach me", or "I want to learn".
+2. Ask the user: "Which topic do you want me to explain?"
+3. Store the answer in a variable called varTopic.
+4. Explain varTopic using this format:
+   - Meaning
+   - Why we use it
+   - Simple example
+   - Real-world use case
+   - Summary
+5. End by asking whether the user wants a practical example or interview questions.
+
+Tone:
+Simple, friendly, classroom trainer style.</pre>
+    </section>
+
+    <section>
+      <h2>9. Beginner-Friendly Diagram</h2>
+      <pre>Agent: Training Help Agent
+│
+├── Topic 1: Explain Topic
+│   ├── Trigger phrases: Explain, What is, Teach me
+│   ├── Ask question: Which topic do you want?
+│   ├── Store answer: varTopic
+│   └── Explain the topic
+│
+├── Topic 2: Interview Questions
+│   ├── Trigger phrases: Interview questions, Mock interview
+│   └── Give Q&amp;A
+│
+└── Topic 3: Troubleshooting
+    ├── Trigger phrases: I got error, Not working
+    └── Help fix the issue</pre>
+    </section>
+
+    <section>
+      <h2>10. Final Checklist</h2>
+      <div class="card">
+        <p>Use this checklist before testing your agent:</p>
+        <ul>
+          <li>Created agent name: <strong>Training Help Agent</strong></li>
+          <li>Added simple agent instructions</li>
+          <li>Created topic: <strong>Explain Topic</strong></li>
+          <li>Added trigger phrases</li>
+          <li>Added question node</li>
+          <li>Stored user answer in <code>varTopic</code></li>
+          <li>Added final explanation message</li>
+          <li>Tested with <code>Explain RAG</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>11. Quick Recap</h2>
+      <div class="success">
+        <p><strong>Agent</strong> is the full assistant.</p>
+        <p><strong>Topic</strong> is one small conversation inside the assistant.</p>
+        <p><strong>Trigger phrases</strong> start the topic.</p>
+        <p><strong>Question node</strong> collects user input.</p>
+        <p><strong>Variable</strong> stores the user input.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>References</h2>
+      <ul>
+        <li>Microsoft Learn: Create and edit topics in Copilot Studio</li>
+        <li>Microsoft Learn: Set topic triggers in Copilot Studio</li>
+        <li>Microsoft Learn: Design effective trigger phrases</li>
+      </ul>
+      <p class="small">Prepared as a simple classroom-style HTML tutorial.</p>
+    </section>
+
+    <footer class="footer">
+      <strong>ItTechGenie-style Training Note</strong><br />
+      Learn better with simple examples, step-by-step practice, and real-time use cases.
+    </footer>
+  </main>
+</body>
+</html>

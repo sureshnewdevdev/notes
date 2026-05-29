@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI Agent Production & Governance | Classroom Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f5;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.45;
+            color: #1a2c3e;
+            padding: 2rem 1.5rem;
+        }
+
+        .notebook {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            padding: 2rem 2rem 3rem 2rem;
+        }
+
+        /* classroom header */
+        .class-header {
+            border-bottom: 4px solid #0f6cbd;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        .title-section h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0b2b3b, #1a6d9f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .title-section p {
+            font-size: 0.9rem;
+            color: #4a627a;
+            margin-top: 0.3rem;
+        }
+        .badge {
+            background: #e9edf2;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #0f5b8c;
+        }
+
+        /* grid & cards */
+        .modules-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .module-card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .module-header {
+            background: #f8fafc;
+            padding: 1rem 1.8rem;
+            border-bottom: 2px solid #e0e9f0;
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .module-num {
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: #1e6f9f;
+            color: white;
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .module-title {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: #0c4a6e;
+        }
+        .module-sub {
+            margin-left: auto;
+            font-size: 0.8rem;
+            background: #e6f0fa;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+
+        .module-content {
+            padding: 1.5rem 1.8rem 1.8rem;
+        }
+
+        .diagram-container {
+            background: #fefcf5;
+            border: 1px solid #e9e2cf;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            margin: 1.2rem 0 1.5rem 0;
+            box-shadow: inset 0 1px 2px #fff8, 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .diagram-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8b6b3d;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .svg-diagram {
+            width: 100%;
+            overflow-x: auto;
+        }
+        svg {
+            max-width: 100%;
+            height: auto;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .example-box {
+            background: #f1f6fe;
+            border-left: 5px solid #1e88e5;
+            padding: 1rem 1.4rem;
+            border-radius: 1rem;
+            margin: 1.2rem 0;
+        }
+        .example-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #0a558c;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .code-block {
+            background: #1e2a32;
+            color: #e2f0fa;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 0.8rem 0;
+        }
+        .two-col {
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .col {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: 0;
+            height: 1px;
+            background: #e2edf7;
+        }
+
+        .handson {
+            background: #eaf7e6;
+            border-radius: 1.2rem;
+            padding: 1.2rem 1.6rem;
+            margin-top: 2rem;
+            border: 1px solid #cde2c4;
+        }
+        .handson h3 {
+            color: #2b6e2f;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+        }
+
+        @media (max-width: 750px) {
+            .notebook { padding: 1rem; }
+            .module-header { flex-direction: column; align-items: flex-start; }
+        }
+        .bullet-list {
+            margin: 0.8rem 0 0.8rem 1.4rem;
+        }
+        li {
+            margin: 0.4rem 0;
+        }
+        .tag {
+            background: #d9eafb;
+            border-radius: 20px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .key-term {
+            font-weight: 700;
+            color: #0f6b9e;
+        }
+    </style>
+</head>
+<body>
+<div class="notebook">
+    <div class="class-header">
+        <div class="title-section">
+            <h1>📘 AI Agents in Production</h1>
+            <p>Enterprise Control · Governance · Copilot Studio + Azure AI Foundry · Multi-Agent Orchestration</p>
+        </div>
+        <div class="badge">☕ Classroom Notes + Diagrams | Days 3–5</div>
+    </div>
+
+    <div class="modules-grid">
+        <!-- MODULE 3: Monitor AI agents -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-num">3</span>
+                <span class="module-title">Monitor AI agents in production</span>
+                <span class="module-sub">built-in analytics · automated evaluation</span>
+            </div>
+            <div class="module-content">
+                <p><span class="key-term">🔍 Performance monitoring</span> – Use <strong>Copilot Studio built-in analytics</strong> to track usage, satisfaction, and conversation health. <strong>Automated evaluation</strong> validates agent behavior (grounding, safety, response quality).</p>
+                <div class="diagram-container">
+                    <div class="diagram-title">📊 Monitoring loop & evaluation metrics</div>
+                    <div class="svg-diagram">
+                        <svg viewBox="0 0 620 130" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="20" width="110" height="45" rx="8" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5" />
+                            <text x="65" y="48" text-anchor="middle" font-size="11" fill="#0c4e6e">Agent logs</text>
+                            <path d="M125 42 L165 42" stroke="#1e88e5" stroke-width="2" marker-end="url(#arrow)" />
+                            <rect x="170" y="20" width="130" height="45" rx="8" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5" />
+                            <text x="235" y="48" text-anchor="middle" font-size="11" fill="#a65700">Analytics (Copilot)</text>
+                            <path d="M305 42 L345 42" stroke="#fb8c00" stroke-width="2" />
+                            <rect x="350" y="10" width="120" height="65" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5" />
+                            <text x="410" y="38" text-anchor="middle" font-size="11" fill="#1f5c2c">Auto-eval</text>
+                            <text x="410" y="56" text-anchor="middle" font-size="9" fill="#2e7d32">(safety/grounding)</text>
+                            <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#1e88e5"/></marker></defs>
+                        </svg>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <div class="example-title">💡 Example: Proactive agent monitoring</div>
+                    <p><strong>Scenario:</strong> Retail Copilot agent for order returns. Built-in dashboard shows drop in CSAT. Automated evaluation triggers a test suite: "return policy hallucination test" → detects that agent invents expedited fee. <br> ✅ Action: Update grounding knowledge & retest.</p>
+                    <div class="code-block"># Sample analytics insight (simulated)
+Metric: "Fallback rate" → 12% → exceeded threshold.
+Evaluation: "groundedness" score 0.63 (low). 
+Remediation: Add fallback topic & refine prompt grounding.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 4: Security, Governance & Cost -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-num">4</span>
+                <span class="module-title">Security, Governance & Cost Management</span>
+                <span class="module-sub">Microsoft Entra ID · Agent 365 · Cost Controls</span>
+            </div>
+            <div class="module-content">
+                <div class="two-col">
+                    <div class="col">
+                        <p><span class="key-term">🔐 Microsoft Entra Agent ID</span> – assign unique service principal per agent, enforce conditional access.</p>
+                        <p><span class="key-term">⚙️ Microsoft Agent 365</span> – central control plane for agent discovery, access policies, compliance at scale.</p>
+                    </div>
+                    <div class="col">
+                        <p><span class="key-term">💰 Agent Cost Controls</span> – throttle tokens, limit conversation turns, set budgets per agent/department.</p>
+                    </div>
+                </div>
+                <div class="diagram-container">
+                    <div class="diagram-title">🏛️ Governance architecture – Agent 365 control plane</div>
+                    <svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="50" width="140" height="50" rx="8" fill="#fce4ec" stroke="#c2185b" />
+                        <text x="90" y="80" text-anchor="middle" font-size="12" fill="#ad1457">Entra Agent ID</text>
+                        <path d="M160 75 L210 75" stroke="#c2185b" stroke-width="2" />
+                        <rect x="215" y="30" width="150" height="90" rx="10" fill="#e1f5fe" stroke="#0288d1" stroke-width="1.8" />
+                        <text x="290" y="55" text-anchor="middle" font-size="11" font-weight="bold" fill="#01579b">Microsoft Agent 365</text>
+                        <text x="290" y="75" text-anchor="middle" font-size="9">Policy engine | RBAC | Audit</text>
+                        <text x="290" y="95" text-anchor="middle" font-size="9">Agent catalog | Cost limits</text>
+                        <path d="M365 75 L410 75" stroke="#0288d1" stroke-width="2" />
+                        <rect x="415" y="40" width="120" height="45" rx="8" fill="#fff9c4" stroke="#fbc02d" />
+                        <text x="475" y="68" text-anchor="middle" font-size="11" fill="#b26a00">Cost Controls</text>
+                        <text x="555" y="75" fill="#1e5f7a" font-size="10">→ Budget per agent</text>
+                    </svg>
+                </div>
+                <div class="example-box">
+                    <div class="example-title">📌 Real-world governance scenario</div>
+                    <p><strong>IT Helpdesk agents:</strong> Deploy 50 Copilot agents per region. Use Agent 365 to enforce PII redaction, monthly token budget of $500 per agent, and Entra ID MFA for privileged topics. Cost anomaly detection alerts if agent consumes 200% of expected tokens.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 5: Azure AI Foundry Interoperability - RAG, Fine-tuning, etc -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-num">5</span>
+                <span class="module-title">Customize, Orchestrate & Experiment (Azure AI Foundry)</span>
+                <span class="module-sub">RAG · Fine-tuning · Distillation · Agent Service</span>
+            </div>
+            <div class="module-content">
+                <p><strong>Retrieval Augmented Generation (RAG)</strong> + <strong>Fine-tuning & Distillation</strong> for domain-specialized agents. <strong>Azure AI Foundry Agent Service</strong> enables agent orchestration and debugging.</p>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 700 130" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="10" width="100" height="40" rx="6" fill="#d1c4e9" stroke="#4527a0" />
+                        <text x="60" y="35" text-anchor="middle" font-size="9">User Query</text>
+                        <path d="M110 30 L150 30" stroke="#4527a0" stroke-width="2" />
+                        <rect x="155" y="5" width="110" height="70" rx="8" fill="#bbdefb" stroke="#1976d2" />
+                        <text x="210" y="25" text-anchor="middle" font-size="9" font-weight="bold">RAG Pipeline</text>
+                        <text x="210" y="42" text-anchor="middle" font-size="8">Vector retrieval</text>
+                        <text x="210" y="58" text-anchor="middle" font-size="8">Grounding</text>
+                        <path d="M265 40 L310 40" stroke="#1976d2" stroke-width="2" />
+                        <rect x="315" y="5" width="120" height="70" rx="8" fill="#ffe0b2" stroke="#ef6c00" />
+                        <text x="375" y="30" text-anchor="middle" font-size="10" font-weight="bold">Foundry</text>
+                        <text x="375" y="48" text-anchor="middle" font-size="9">Agent Runtime</text>
+                        <path d="M435 40 L480 40" stroke="#ef6c00" stroke-width="2" />
+                        <rect x="485" y="15" width="100" height="45" rx="8" fill="#c8e6c9" stroke="#2e7d32" />
+                        <text x="535" y="43" text-anchor="middle" font-size="10">Response API</text>
+                        <path d="M585 38 L620 38" stroke="#2e7d32" stroke-width="2" />
+                        <text x="645" y="43" fill="#1f543e" font-size="11">→ Answer</text>
+                    </svg>
+                </div>
+                <div class="example-box">
+                    <div class="example-title">📚 RAG + Fine-tuning: Financial analyst agent</div>
+                    <p>Ingest 10k SEC filings into Azure AI Search → RAG grounds responses. For complex sentiment, fine-tune a GPT-4o model on past earnings calls. Distill to a smaller model for cost efficiency. Use Azure AI Foundry to debug orchestration flow.</p>
+                    <div class="code-block"># Foundry evaluation snippet
+from azure.ai.resources import AIProject
+client = AIProject.from_connection("fin-rag-project")
+eval_results = client.evaluate(agent_id="analyst-01", dataset="qa_finance.json")
+print(f"Grounding score: {eval_results.groundedness}")</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 6: Multi-Agent with Semantic Kernel & AutoGen -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-num">6</span>
+                <span class="module-title">Build Multi-Agent Apps with Semantic Kernel or AutoGen</span>
+                <span class="module-sub">Orchestration · Collaboration · Plugins</span>
+            </div>
+            <div class="module-content">
+                <p><span class="key-term">Semantic Kernel</span> – lightweight orchestration and plugins. <span class="key-term">AutoGen</span> – advanced multi-agent conversations, code executors, and human-in-the-loop.</p>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 780 150" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="30" y="45" width="110" height="40" rx="8" fill="#ffccbc" stroke="#d84315" />
+                        <text x="85" y="68" text-anchor="middle" font-size="10">Orchestrator</text>
+                        <path d="M140 65 L190 35" stroke="#d84315" stroke-width="1.5" />
+                        <path d="M140 65 L190 95" stroke="#d84315" stroke-width="1.5" />
+                        <rect x="195" y="15" width="130" height="40" rx="8" fill="#b3e5fc" stroke="#0277bd" />
+                        <text x="260" y="40" text-anchor="middle" font-size="10">Researcher Agent</text>
+                        <rect x="195" y="85" width="130" height="40" rx="8" fill="#b3e5fc" stroke="#0277bd" />
+                        <text x="260" y="110" text-anchor="middle" font-size="10">Coder Agent</text>
+                        <path d="M325 35 L380 35" stroke="#0277bd" stroke-width="1.5" />
+                        <path d="M325 105 L380 105" stroke="#0277bd" stroke-width="1.5" />
+                        <rect x="385" y="45" width="110" height="40" rx="8" fill="#e1bee7" stroke="#8e24aa" />
+                        <text x="440" y="68" text-anchor="middle" font-size="10">Aggregator</text>
+                        <path d="M495 65 L540 65" stroke="#8e24aa" stroke-width="2" />
+                        <text x="560" y="70" fill="#2c3e50" font-size="11">Final response</text>
+                    </svg>
+                    <div style="text-align:center; margin-top: 8px;"><span class="tag">Semantic Kernel Plugin Example</span> <span class="tag">AutoGen group chat</span></div>
+                </div>
+                <div class="example-box">
+                    <div class="example-title">🤖 Multi-Agent Hands-on: RAG pipeline + Plugin</div>
+                    <p><strong>Scenario:</strong> Use Semantic Kernel to build a RAG plugin that queries vector DB, plus an AutoGen group chat (planner, search, validation). Generate & optimize RAG performance by iterating chunk size and embedding model via Azure Foundry SDK.</p>
+                    <div class="code-block"># Semantic Kernel plugin skeleton
+class FinancePlugin:
+    @kernel_function(name="get_net_income", description="Retrieve net income")
+    def get_net_income(self, ticker: str) -> str:
+        return vector_store.similarity_search(ticker)
+
+# AutoGen: two agents collaborate
+from autogen import AssistantAgent, UserProxyAgent
+assistant = AssistantAgent("analyst", llm_config=config)
+user_proxy = UserProxyAgent("user", code_execution_config=True)
+user_proxy.initiate_chat(assistant, message="Forecast Q3 using RAG data")</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 7 (Day5) Cross-platform invocation & orchestration -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-num">7</span>
+                <span class="module-title">Cross-Platform Orchestration: Copilot Studio + Azure Foundry</span>
+                <span class="module-sub">MCP contract · Invocation Patterns · Enterprise scenarios</span>
+            </div>
+            <div class="module-content">
+                <p><strong>Agent invocation patterns:</strong> Copilot Studio invokes Foundry agents for advanced reasoning; Foundry invokes declarative Copilot agents for conversational UX. <strong>MCP</strong> (Model Context Protocol) as common contract layer.</p>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 780 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="30" width="180" height="65" rx="12" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.8" />
+                        <text x="105" y="55" text-anchor="middle" font-size="13" font-weight="bold">Copilot Studio</text>
+                        <text x="105" y="75" text-anchor="middle" font-size="10">Declarative Agent</text>
+                        <text x="105" y="90" text-anchor="middle" font-size="9">(Teams frontend)</text>
+
+                        <path d="M195 62 L265 62" stroke="#0f6cbd" stroke-width="2" stroke-dasharray="5,3" />
+                        <text x="230" y="55" text-anchor="middle" font-size="8" fill="#1f6390">MCP / API</text>
+
+                        <rect x="270" y="15" width="220" height="95" rx="12" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.8" />
+                        <text x="380" y="40" text-anchor="middle" font-size="12" font-weight="bold">Azure AI Foundry</text>
+                        <text x="380" y="60" text-anchor="middle" font-size="10">Reasoning Agents (RAG/FT)</text>
+                        <text x="380" y="78" text-anchor="middle" font-size="9">Agent Runtime + Tools</text>
+                        <text x="380" y="94" text-anchor="middle" font-size="9">Cost & Governance</text>
+
+                        <path d="M490 62 L545 62" stroke="#5e35b1" stroke-width="2" />
+                        <rect x="550" y="30" width="150" height="65" rx="12" fill="#fff3e0" stroke="#fb8c00" />
+                        <text x="625" y="55" text-anchor="middle" font-size="11" font-weight="bold">Enterprise Systems</text>
+                        <text x="625" y="75" text-anchor="middle" font-size="9">(SAP, ServiceNow)</text>
+
+                        <!-- bidirectional pattern annotation -->
+                        <path d="M290 120 L290 150 L105 150 L105 100" fill="none" stroke="#4caf50" stroke-width="1.5" stroke-dasharray="4,3" />
+                        <text x="200" y="145" text-anchor="middle" font-size="9" fill="#2e7d32">Pattern: Delegation to reasoning agent</text>
+                    </svg>
+                </div>
+                <div class="example-box">
+                    <div class="example-title">🏢 Enterprise Scenario: IT Helpdesk + Foundry reasoning</div>
+                    <p>IT Helpdesk Copilot Studio agent (Teams chat) receives complex "debug log analysis" request → Invokes Azure AI Foundry reasoning agent that runs semantic kernel planner, queries logs, returns root cause. The Copilot agent formats response for end-user. <strong>Cost-efficient:</strong> reasoning only triggered for complex tasks.</p>
+                    <div class="code-block">// Invocation contract (simplified MCP schema)
+{
+  "agent_request": { "intent": "diagnose_error", "payload": "error_code 0x80070005" },
+  "context": { "user_role": "helpdesk", "tenant": "contoso" }
+}
+// Foundry response with justification + action</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HANDS-ON LABS section consolidated -->
+        <div class="handson">
+            <h3>🧪 Hands-on Labs Summary</h3>
+            <ul class="bullet-list">
+                <li><strong>Deploy Copilot to Microsoft Teams</strong> – create declarative agent, publish to Teams app store, manage permissions.</li>
+                <li><strong>Azure Foundry Labs</strong> – build RAG pipeline with Azure AI Search, evaluate with Azure AI Foundry SDK.</li>
+                <li><strong>Use Generative AI in Copilot Studio</strong> – build custom topics, generative answers, and plugins.</li>
+                <li><strong>Multi-Agent Collaboration (Semantic Kernel/AutoGen)</strong> – provision resources, create RAG, performance optimization.</li>
+                <li><strong>Governance Playground</strong> – assign Entra Agent IDs, set cost limits via Agent 365 control plane.</li>
+            </ul>
+            <div class="code-block" style="margin-top: 10px;"># Quick Azure Foundry snippet to deploy & test agent
+from azure.ai.projects import AIProjectClient
+project_client = AIProjectClient.from_connection_string("...")
+agent = project_client.agents.create_agent(model="gpt-4o", tools=rag_tools)
+thread = project_client.agents.create_thread()
+project_client.agents.create_message(thread.id, "Summarize last quarter earnings")
+run = project_client.agents.run(thread.id, agent.id)</div>
+        </div>
+
+        <!-- ADDITIONAL ORCHESTRATION PATTERNS (Callout) -->
+        <div style="margin-top: 1rem; background: #fef8e7; border-radius: 1rem; padding: 1rem; text-align: center; border: 1px solid #ffe0a3;">
+            <span style="font-weight: 700;">📌 Key takeaway: </span> Production-ready AI agents demand <strong>monitoring + governance + cross-platform orchestration</strong>. Copilot Studio delivers conversational UX, Azure AI Foundry provides advanced reasoning, and Microsoft Agent 365 ensures control at scale.
+        </div>
+    </div>
+
+    <div style="margin-top: 2.5rem; font-size: 0.75rem; color: #7f8c8d; text-align: center; border-top: 1px solid #e9ecef; padding-top: 1.5rem;">
+        Classroom notes based on Enterprise Control & Governance for Copilot Studio agents | Modules 3–7 (Day 3–5) — Includes diagrams, examples, and code templates.
+    </div>
+</div>
+</body>
+</html>
